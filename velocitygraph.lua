@@ -78,7 +78,8 @@ end
 --]]
 
 local velocityEnable = Menu.Switch("Velocity", "Enabled", true);
-local velocityColor = Menu.ColorEdit("Velocity", "Line Color", Color.new(1.0, 1.0, 1.0, 1.0));
+local velocityLineColor = Menu.ColorEdit("Velocity", "Line Color", Color.new(0.98, 0.45, 0.94, 1.0));
+local velocityHeaderColor = Menu.ColorEdit("Velocity", "Header Color", Color.new(0.98, 0.45, 0.94, 1.0));
 local velocityUpdate = Menu.SliderInt("Velocity", "Update Time (ms)", 20, 0, 500);
 local velocitySegments = Menu.SliderInt("Velocity", "Line Segments", 36, 5, 100);
 
@@ -124,21 +125,21 @@ cheat.RegisterCallback("draw", function()
             window.down = false;
         end
 
-        Render.Blur(Vector2.new(window.x, window.y), Vector2.new(window.x + window.w, window.y + window.h), Color.new(1.0, 1.0, 1.0, 1.0), 5.0);
-
         local velocity = math.floor(localPlayer:GetProp("m_vecVelocity"):Length2D());
         local velText = tostring(velocity) .. " m/s";
         local textSize = Render.CalcTextSize(velText, 12)
+
+        Render.Blur(Vector2.new(window.x, window.y), Vector2.new(window.x + window.w, window.y + window.h), Color.new(1.0, 1.0, 1.0, 1.0));
+        Render.BoxFilled(Vector2.new(window.x, window.y), Vector2.new(window.x + window.w, window.y + 4), velocityHeaderColor:Get());
+        Render.Box(Vector2.new(window.x, window.y), Vector2.new(window.x + window.w, window.y + window.h), Color.new(0.2, 0.2, 0.2, 1.0));
+        Render.Box(Vector2.new(window.x, window.y + 4), Vector2.new(window.x + window.w, window.y + window.h - 4 - textSize.y), Color.new(0.2, 0.2, 0.2, 1.0));
 
         if (velocity > velocityTable.highestValue) then
             velocityTable.highestValue = velocity;
         end
 
         -- Manual Center bc we don't fuck w/ making custom fonts
-        Render.Text(velText, Vector2.new(window.x + (window.w / 2) - (textSize.x / 2), window.y + window.h - textSize.y - 4), Color.new(0.85, 0.85, 0.85, 1.0), 12);
-
-        Render.BoxFilled(Vector2.new(window.x, window.y + 5), Vector2.new(window.x + window.w, window.y + window.h - 8 - textSize.y), Color.new(0.08, 0.08, 0.08, 0.5));
-        Render.Box(Vector2.new(window.x, window.y), Vector2.new(window.x + window.w, window.y + window.h), Color.new(0.2, 0.2, 0.2, 1.0), 5);
+        Render.Text(velText, Vector2.new(window.x + (window.w / 2) - (textSize.x / 2), window.y + window.h - textSize.y - 2), Color.new(0.85, 0.85, 0.85, 1.0), 12);
 
         if (GlobalVars.realtime - velocityTable.savedRealTime >= velocityUpdate:Get() / 1000) then
             velocityTable.savedRealTime = GlobalVars.realtime;
@@ -175,20 +176,20 @@ cheat.RegisterCallback("draw", function()
         end
 
         if (#velocityTable.velocityGraph > 0) then
-            local boxHeight = (window.y + window.h - 8 - textSize.y) - (window.y + 5);
-            local lineWidth = window.w / (#velocityTable.velocityGraph - 1);
+            local boxHeight = (window.y + window.h - 8 - textSize.y) - (window.y + 10);
+            local lineWidth = (window.w - 2) / (#velocityTable.velocityGraph - 1);
 
             local posTable = {};
             for i = 1, #velocityTable.velocityGraph do
                 local lineHeight = boxHeight * (velocityTable.velocityGraph[i] / velocityTable.highestValue);
 
-                table.insert(posTable, Vector2.new(window.x + (lineWidth * (i - 1)), window.y + 5 + (boxHeight - lineHeight)));
+                table.insert(posTable, Vector2.new(window.x + 1 + (lineWidth * (i - 1)), window.y + 10 + (boxHeight - lineHeight)));
             end
 
             if (#posTable > 1) then
                 for i = 1, #posTable do
                     if (i ~= 1) then
-                        Render.Line(posTable[i], posTable[i - 1], velocityColor:Get());
+                        Render.Line(posTable[i], posTable[i - 1], velocityLineColor:Get());
                     end
                 end
             end
