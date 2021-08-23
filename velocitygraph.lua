@@ -80,6 +80,7 @@ end
 local velocityEnable = Menu.Switch("Velocity", "Enabled", true);
 local velocityColor = Menu.ColorEdit("Velocity", "Line Color", Color.new(1.0, 1.0, 1.0, 1.0));
 local velocityUpdate = Menu.SliderInt("Velocity", "Update Time (ms)", 20, 0, 500);
+local velocitySegments = Menu.SliderInt("Velocity", "Line Segments", 36, 5, 100);
 
 local xSlider = Menu.SliderInt("Position", "X Axis", 50, 0, windowSize.x, "", function(value) window.x = value; end);
 local ySlider = Menu.SliderInt("Position", "Y Axis", 50, 0, windowSize.y, "", function(value) window.y = value; end);
@@ -144,7 +145,17 @@ cheat.RegisterCallback("draw", function()
 
             -- Codenz go here
             local highest = false;
-            if (#velocityTable.velocityGraph >= 36) then if (velocityTable.velocityGraph[1] == velocityTable.highestValue) then highest = true; end table.remove(velocityTable.velocityGraph, 1); end
+            if (#velocityTable.velocityGraph >= velocitySegments:Get()) then
+                local removalNeeded = #velocityTable.velocityGraph - velocitySegments:Get() + 1;
+
+                for i = 1, removalNeeded do
+                    if (velocityTable.velocityGraph[1] == velocityTable.highestValue) then 
+                        highest = true; 
+                    end
+
+                    table.remove(velocityTable.velocityGraph, 1)
+                end
+            end
             table.insert(velocityTable.velocityGraph, velocityTable.newHighestValue);
 
             if (highest) then
