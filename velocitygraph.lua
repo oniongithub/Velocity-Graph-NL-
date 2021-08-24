@@ -198,11 +198,7 @@ cheat.RegisterCallback("draw", function()
             end
 
             if (#posTable > 1) then
-                for i = 1, #posTable do
-                    if (i ~= 1) then
-                        Render.Line(posTable[i], posTable[i - 1], velocityLineColor:Get());
-                    end
-                end
+                Render.PolyLine(velocityLineColor:Get(), unpack(posTable));
             end
         end
     end
