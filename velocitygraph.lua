@@ -139,7 +139,7 @@ cheat.RegisterCallback("draw", function()
 
         local velocity = math.floor(localPlayer:GetProp("m_vecVelocity"):Length2D());
         local velText = tostring(velocity) .. " m/s";
-        local textSize = Render.CalcTextSize(velText, 12)
+        local textSize = Render.CalcTextSize(velText, 12 * dpi)
 
         Render.Blur(Vector2.new(window.x, window.y), Vector2.new(window.x + windowW, window.y + windowH), Color.new(1.0, 1.0, 1.0, 1.0));
         Render.BoxFilled(Vector2.new(window.x, window.y), Vector2.new(window.x + windowW, window.y + 4), velocityHeaderColor:Get());
@@ -151,7 +151,7 @@ cheat.RegisterCallback("draw", function()
         end
 
         -- Manual Center bc we don't fuck w/ making custom fonts
-        Render.Text(velText, Vector2.new(window.x + (windowW / 2) - (textSize.x / 2), window.y + windowH - textSize.y - 2), Color.new(0.85, 0.85, 0.85, 1.0), 12);
+        Render.Text(velText, Vector2.new(window.x + (windowW / 2) - (textSize.x / 2), window.y + windowH - textSize.y - 2), Color.new(0.85, 0.85, 0.85, 1.0), 12 * dpi);
 
         if (GlobalVars.realtime - velocityTable.savedRealTime >= velocityUpdate:Get() / 1000) then
             velocityTable.savedRealTime = GlobalVars.realtime;
